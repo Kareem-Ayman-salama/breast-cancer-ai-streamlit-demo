@@ -1,0 +1,59 @@
+{
+  "task": "Cancer molecular signature prediction: Primary Tumor vs Solid Tissue Normal",
+  "best_model": "SVM_linear",
+  "threshold": 0.6599999999999999,
+  "samples": 1224,
+  "features": 18936,
+  "class_distribution": {
+    "Normal": 113,
+    "Cancer": 1111
+  },
+  "holdout_distribution": {
+    "Normal": 23,
+    "Cancer": 222
+  },
+  "roc_auc": 1.0,
+  "average_precision": 0.9999999999999998,
+  "balanced_accuracy": 1.0,
+  "accuracy": 1.0,
+  "f1": 1.0,
+  "precision": 1.0,
+  "recall": 1.0,
+  "confusion_matrix": [
+    [
+      23,
+      0
+    ],
+    [
+      0,
+      222
+    ]
+  ],
+  "classification_report": {
+    "Normal": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 23.0
+    },
+    "Cancer": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 222.0
+    },
+    "accuracy": 1.0,
+    "macro avg": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 245.0
+    },
+    "weighted avg": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 245.0
+    }
+  }
+}

@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="ar">
+<head>
+  <meta charset="utf-8">
+  <title>Breast Cancer AI Project - Client Report</title>
+  <style>
+    body {
+      font-family: Arial, Tahoma, sans-serif;
+      margin: 32px auto;
+      max-width: 1180px;
+      line-height: 1.65;
+      color: #17202a;
+      background: #ffffff;
+    }
+    h1, h2, h3 { color: #12355b; }
+    h1 { border-bottom: 3px solid #0f766e; padding-bottom: 10px; }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 14px 0 26px;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid #d9e2ec;
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #eef6f6; }
+    .note {
+      background: #fff8e1;
+      border-left: 4px solid #f59e0b;
+      padding: 10px 14px;
+      margin: 12px 0 20px;
+    }
+    figure {
+      margin: 28px 0;
+      page-break-inside: avoid;
+    }
+    img {
+      width: 100%;
+      max-width: 1050px;
+      border: 1px solid #dde5eb;
+      border-radius: 6px;
+    }
+    ul { margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <h1>Breast Cancer AI Project - Client Report</h1>
+
+  <h2>1. Executive Summary</h2>
+  <p dir="rtl">
+    تم تنظيم المشروع في نظام واحد لتحليل سرطان الثدي باستخدام بيانات الجينات والبيانات الإكلينيكية.
+    النظام يغطي اكتشاف البصمة الجينية للسرطان، تقدير احتمالية الإصابة المستقبلية، تحديد نوع الورم،
+    التنبؤ بالـ survival والـ recurrence، والتحقق الخارجي على GEO، مع تحليل العلاقات بين الجينات.
+  </p>
+
+  <h2>2. Results Overview</h2>
+  <table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Part</th>
+      <th>Dataset</th>
+      <th>Target</th>
+      <th>Samples</th>
+      <th>Main metric</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Cancer molecular signature</td>
+      <td>TCGA-BRCA</td>
+      <td>Cancer vs Normal tissue</td>
+      <td>1224</td>
+      <td>Holdout ROC-AUC 1.000, Accuracy 1.000</td>
+      <td>Completed</td>
+    </tr>
+    <tr>
+      <td>Future incidence risk</td>
+      <td>BCSC</td>
+      <td>1-year breast cancer diagnosis risk</td>
+      <td>2392998</td>
+      <td>Validation ROC-AUC 0.639</td>
+      <td>Completed</td>
+    </tr>
+    <tr>
+      <td>Tumor subtype</td>
+      <td>METABRIC</td>
+      <td>Real CLAUDIN molecular subtype</td>
+      <td>1980</td>
+      <td>Holdout balanced accuracy 0.748</td>
+      <td>Completed</td>
+    </tr>
+    <tr>
+      <td>Survival prognosis</td>
+      <td>METABRIC</td>
+      <td>Overall survival event risk</td>
+      <td>1980</td>
+      <td>Holdout ROC-AUC 0.750</td>
+      <td>Completed</td>
+    </tr>
+    <tr>
+      <td>Recurrence prognosis</td>
+      <td>METABRIC</td>
+      <td>Recurrence-free survival event risk</td>
+      <td>1979</td>
+      <td>Holdout ROC-AUC 0.657</td>
+      <td>Completed</td>
+    </tr>
+    <tr>
+      <td>External validation</td>
+      <td>GEO: GSE2034, GSE20685, GSE7390</td>
+      <td>Relapse, metastasis, death, RFS, OS</td>
+      <td>1643</td>
+      <td>External ROC-AUC range 0.348 to 0.664</td>
+      <td>Completed with limitations</td>
+    </tr>
+    <tr>
+      <td>Gene correlation and patterns</td>
+      <td>METABRIC</td>
+      <td>Gene-gene correlation and expression patterns</td>
+      <td>1980</td>
+      <td>232 strong gene pairs</td>
+      <td>Completed</td>
+    </tr>
+  </tbody>
+</table>
+
+  <h2>3. Key Numbers</h2>
+  <ul>
+    <li>TCGA Cancer Signature ROC-AUC: 1.000, Accuracy: 1.000</li>
+    <li>BCSC Future Risk validation ROC-AUC: 0.639</li>
+    <li>METABRIC Tumor Subtype holdout balanced accuracy: 0.748</li>
+    <li>METABRIC Survival holdout ROC-AUC: 0.750</li>
+    <li>METABRIC Recurrence holdout ROC-AUC: 0.657</li>
+    <li>Strong gene-gene correlation pairs: 232</li>
+  </ul>
+
+  <div class="note" dir="rtl">
+    ملاحظة مهمة: TCGA Cancer Signature ليس Future Incidence Prediction. التنبؤ بنسبة احتمالية الإصابة المستقبلية موجود في جزء BCSC لأنه يحتوي على follow-up labels.
+  </div>
+
+  <h2>4. TCGA Cancer Molecular Signature</h2>
+  <figure><h3>TCGA Cancer Signature ROC Curve</h3><img src="../outputs/tcga_brca_cells/cancer_prediction/figures/cancer_roc_curve.png" alt="TCGA Cancer Signature ROC Curve"></figure>
+  <figure><h3>TCGA Cancer Signature Confusion Matrix</h3><img src="../outputs/tcga_brca_cells/cancer_prediction/figures/cancer_confusion_matrix.png" alt="TCGA Cancer Signature Confusion Matrix"></figure>
+  <figure><h3>TCGA Top Cancer Signature Genes</h3><img src="../outputs/tcga_brca_cells/cancer_prediction/figures/cancer_top_genes.png" alt="TCGA Top Cancer Signature Genes"></figure>
+
+  <h2>5. BCSC Future Incidence Risk</h2>
+  <figure><h3>BCSC Future Risk ROC Curve</h3><img src="../outputs/bcsc_future_risk_prediction/figures/02_bcsc_roc_curve.png" alt="BCSC Future Risk ROC Curve"></figure>
+  <figure><h3>BCSC Calibration</h3><img src="../outputs/bcsc_future_risk_prediction/figures/04_bcsc_calibration.png" alt="BCSC Calibration"></figure>
+  <figure><h3>BCSC Top Risk Feature Effects</h3><img src="../outputs/bcsc_future_risk_prediction/figures/05_bcsc_top_feature_effects.png" alt="BCSC Top Risk Feature Effects"></figure>
+
+  <h2>6. Tumor Subtype Prediction</h2>
+  <figure><h3>Tumor Subtype Confusion Matrix</h3><img src="../outputs/tumor_subtype_prediction/figures/03_subtype_confusion_matrix_all_labeled.png" alt="Tumor Subtype Confusion Matrix"></figure>
+  <figure><h3>Predicted Tumor Subtype Distribution</h3><img src="../outputs/tumor_subtype_prediction/figures/01_predicted_subtype_distribution.png" alt="Predicted Tumor Subtype Distribution"></figure>
+  <figure><h3>Top Subtype Genes</h3><img src="../outputs/tumor_subtype_prediction/figures/05_top_subtype_genes.png" alt="Top Subtype Genes"></figure>
+
+  <h2>7. Prognosis: Survival and Recurrence</h2>
+  <figure><h3>Optimized Prognosis Performance</h3><img src="../outputs/metabric_optimized_prognosis/figures/02_optimized_performance.png" alt="Optimized Prognosis Performance"></figure>
+  <figure><h3>METABRIC Holdout ROC Curves</h3><img src="../outputs/metabric_optimized_prognosis/figures/04_holdout_roc_curves.png" alt="METABRIC Holdout ROC Curves"></figure>
+  <figure><h3>Kaplan Meier Risk Groups</h3><img src="../outputs/metabric_optimized_prognosis/figures/06_kaplan_meier_risk_groups.png" alt="Kaplan Meier Risk Groups"></figure>
+
+  <h2>8. GEO External Validation</h2>
+  <table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>label_name</th>
+      <th>dataset</th>
+      <th>endpoint</th>
+      <th>samples</th>
+      <th>events</th>
+      <th>overlap_genes_used</th>
+      <th>roc_auc</th>
+      <th>balanced_accuracy</th>
+      <th>f1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>GSE20685_metastasis</td>
+      <td>GSE20685</td>
+      <td>metastasis</td>
+      <td>327</td>
+      <td>83</td>
+      <td>48</td>
+      <td>0.663589</td>
+      <td>0.585177</td>
+      <td>0.428571</td>
+    </tr>
+    <tr>
+      <td>GSE20685_death</td>
+      <td>GSE20685</td>
+      <td>overall_survival</td>
+      <td>327</td>
+      <td>83</td>
+      <td>86</td>
+      <td>0.630950</td>
+      <td>0.573005</td>
+      <td>0.417910</td>
+    </tr>
+    <tr>
+      <td>GSE2034_relapse</td>
+      <td>GSE2034</td>
+      <td>relapse</td>
+      <td>286</td>
+      <td>107</td>
+      <td>42</td>
+      <td>0.626168</td>
+      <td>0.589777</td>
+      <td>0.546763</td>
+    </tr>
+    <tr>
+      <td>GSE20685_regional_relapse</td>
+      <td>GSE20685</td>
+      <td>regional_relapse</td>
+      <td>307</td>
+      <td>25</td>
+      <td>48</td>
+      <td>0.563972</td>
+      <td>0.523404</td>
+      <td>0.153061</td>
+    </tr>
+    <tr>
+      <td>GSE7390_rfs</td>
+      <td>GSE7390</td>
+      <td>recurrence_free_survival</td>
+      <td>198</td>
+      <td>91</td>
+      <td>42</td>
+      <td>0.551094</td>
+      <td>0.532813</td>
+      <td>0.548077</td>
+    </tr>
+    <tr>
+      <td>GSE7390_os</td>
+      <td>GSE7390</td>
+      <td>overall_survival</td>
+      <td>198</td>
+      <td>142</td>
+      <td>68</td>
+      <td>0.347963</td>
+      <td>0.401534</td>
+      <td>0.586873</td>
+    </tr>
+  </tbody>
+</table>
+  <figure><h3>METABRIC to GEO External AUC</h3><img src="../outputs/geo_external_validation/figures/04_metabric_to_geo_external_auc.png" alt="METABRIC to GEO External AUC"></figure>
+  <figure><h3>External ROC Curves</h3><img src="../outputs/geo_external_validation/figures/05_external_roc_curves.png" alt="External ROC Curves"></figure>
+  <figure><h3>External Kaplan Meier Risk Groups</h3><img src="../outputs/geo_external_validation/figures/07_external_km_risk_groups.png" alt="External Kaplan Meier Risk Groups"></figure>
+
+  <h2>9. Gene Correlation and Patterns</h2>
+  <table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>gene_a</th>
+      <th>gene_b</th>
+      <th>spearman_correlation</th>
+      <th>abs_correlation</th>
+      <th>relationship</th>
+      <th>gene_a_sources</th>
+      <th>gene_b_sources</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>KRT17</td>
+      <td>KRT5</td>
+      <td>0.878678</td>
+      <td>0.878678</td>
+      <td>positive co-expression</td>
+      <td>curated_breast_cancer_marker; tumor_subtype</td>
+      <td>curated_breast_cancer_marker; tumor_subtype</td>
+    </tr>
+    <tr>
+      <td>KRT14</td>
+      <td>KRT5</td>
+      <td>0.831317</td>
+      <td>0.831317</td>
+      <td>positive co-expression</td>
+      <td>curated_breast_cancer_marker; tumor_subtype</td>
+      <td>curated_breast_cancer_marker; tumor_subtype</td>
+    </tr>
+    <tr>
+      <td>KRT17</td>
+      <td>KRT14</td>
+      <td>0.831112</td>
+      <td>0.831112</td>
+      <td>positive co-expression</td>
+      <td>curated_breast_cancer_marker; tumor_subtype</td>
+      <td>curated_breast_cancer_marker; tumor_subtype</td>
+    </tr>
+    <tr>
+      <td>HSD17B6</td>
+      <td>COL10A1</td>
+      <td>0.826491</td>
+      <td>0.826491</td>
+      <td>positive co-expression</td>
+      <td>cancer_signature</td>
+      <td>cancer_signature</td>
+    </tr>
+    <tr>
+      <td>RPL21</td>
+      <td>RPL10A</td>
+      <td>0.818212</td>
+      <td>0.818212</td>
+      <td>positive co-expression</td>
+      <td>survival</td>
+      <td>survival</td>
+    </tr>
+    <tr>
+      <td>C1R</td>
+      <td>CFH</td>
+      <td>0.803324</td>
+      <td>0.803324</td>
+      <td>positive co-expression</td>
+      <td>survival</td>
+      <td>survival</td>
+    </tr>
+    <tr>
+      <td>SDHD</td>
+      <td>SELENOF</td>
+      <td>0.774649</td>
+      <td>0.774649</td>
+      <td>positive co-expression</td>
+      <td>survival</td>
+      <td>survival</td>
+    </tr>
+    <tr>
+      <td>CLEC10A</td>
+      <td>KLRB1</td>
+      <td>0.760175</td>
+      <td>0.760175</td>
+      <td>positive co-expression</td>
+      <td>tumor_subtype</td>
+      <td>survival</td>
+    </tr>
+    <tr>
+      <td>MARCHF6</td>
+      <td>FOXP1-IT1</td>
+      <td>0.742527</td>
+      <td>0.742527</td>
+      <td>positive co-expression</td>
+      <td>survival</td>
+      <td>survival</td>
+    </tr>
+    <tr>
+      <td>MKI67</td>
+      <td>CDC20</td>
+      <td>0.740799</td>
+      <td>0.740799</td>
+      <td>positive co-expression</td>
+      <td>curated_breast_cancer_marker; recurrence</td>
+      <td>curated_breast_cancer_marker; recurrence</td>
+    </tr>
+    <tr>
+      <td>FCN1</td>
+      <td>CLEC10A</td>
+      <td>0.740766</td>
+      <td>0.740766</td>
+      <td>positive co-expression</td>
+      <td>tumor_subtype</td>
+      <td>tumor_subtype</td>
+    </tr>
+    <tr>
+      <td>FCN1</td>
+      <td>KLRB1</td>
+      <td>0.739635</td>
+      <td>0.739635</td>
+      <td>positive co-expression</td>
+      <td>tumor_subtype</td>
+      <td>survival</td>
+    </tr>
+  </tbody>
+</table>
+  <figure><h3>Gene-Gene Correlation Heatmap</h3><img src="../outputs/gene_correlation_pattern_analysis/figures/01_gene_gene_correlation_heatmap.png" alt="Gene-Gene Correlation Heatmap"></figure>
+  <figure><h3>Subtype Average Gene Expression Pattern</h3><img src="../outputs/gene_correlation_pattern_analysis/figures/02_subtype_average_gene_expression_heatmap.png" alt="Subtype Average Gene Expression Pattern"></figure>
+  <figure><h3>Strong Gene Correlation Network</h3><img src="../outputs/gene_correlation_pattern_analysis/figures/04_strong_gene_correlation_network.png" alt="Strong Gene Correlation Network"></figure>
+  <figure><h3>Gene Pair Scatter Patterns</h3><img src="../outputs/gene_correlation_pattern_analysis/figures/05_gene_pair_scatter_patterns.png" alt="Gene Pair Scatter Patterns"></figure>
+
+  <h2>10. Limitations and Next Steps</h2>
+  <ul>
+    <li>Use TCGA as molecular signature detection, not future incidence risk.</li>
+    <li>Use BCSC for future percentage risk because it has real future diagnosis labels.</li>
+    <li>Survival and recurrence are biologically harder, so moderate performance is expected and should be improved with more cohorts.</li>
+    <li>External validation is mixed and should be included transparently in the paper.</li>
+    <li>Clinical support is decision support only, not direct treatment prescription.</li>
+  </ul>
+</body>
+</html>

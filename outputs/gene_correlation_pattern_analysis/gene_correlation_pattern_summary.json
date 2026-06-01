@@ -1,0 +1,191 @@
+{
+  "samples": 1980,
+  "selected_genes": 70,
+  "plotted_genes": 50,
+  "strong_pairs_abs_ge_0_45": 232,
+  "top_positive_pairs": [
+    {
+      "gene_a": "KRT17",
+      "gene_b": "KRT5",
+      "spearman_correlation": 0.8786776377347074,
+      "abs_correlation": 0.8786776377347074,
+      "relationship": "positive co-expression",
+      "gene_a_sources": "curated_breast_cancer_marker; tumor_subtype",
+      "gene_b_sources": "curated_breast_cancer_marker; tumor_subtype"
+    },
+    {
+      "gene_a": "KRT14",
+      "gene_b": "KRT5",
+      "spearman_correlation": 0.8313169703488613,
+      "abs_correlation": 0.8313169703488613,
+      "relationship": "positive co-expression",
+      "gene_a_sources": "curated_breast_cancer_marker; tumor_subtype",
+      "gene_b_sources": "curated_breast_cancer_marker; tumor_subtype"
+    },
+    {
+      "gene_a": "KRT17",
+      "gene_b": "KRT14",
+      "spearman_correlation": 0.8311122787515491,
+      "abs_correlation": 0.8311122787515491,
+      "relationship": "positive co-expression",
+      "gene_a_sources": "curated_breast_cancer_marker; tumor_subtype",
+      "gene_b_sources": "curated_breast_cancer_marker; tumor_subtype"
+    },
+    {
+      "gene_a": "HSD17B6",
+      "gene_b": "COL10A1",
+      "spearman_correlation": 0.8264913844546761,
+      "abs_correlation": 0.8264913844546761,
+      "relationship": "positive co-expression",
+      "gene_a_sources": "cancer_signature",
+      "gene_b_sources": "cancer_signature"
+    },
+    {
+      "gene_a": "RPL21",
+      "gene_b": "RPL10A",
+      "spearman_correlation": 0.8182115318057174,
+      "abs_correlation": 0.8182115318057174,
+      "relationship": "positive co-expression",
+      "gene_a_sources": "survival",
+      "gene_b_sources": "survival"
+    },
+    {
+      "gene_a": "C1R",
+      "gene_b": "CFH",
+      "spearman_correlation": 0.8033241045951958,
+      "abs_correlation": 0.8033241045951958,
+      "relationship": "positive co-expression",
+      "gene_a_sources": "survival",
+      "gene_b_sources": "survival"
+    },
+    {
+      "gene_a": "SDHD",
+      "gene_b": "SELENOF",
+      "spearman_correlation": 0.7746489432173993,
+      "abs_correlation": 0.7746489432173993,
+      "relationship": "positive co-expression",
+      "gene_a_sources": "survival",
+      "gene_b_sources": "survival"
+    },
+    {
+      "gene_a": "CLEC10A",
+      "gene_b": "KLRB1",
+      "spearman_correlation": 0.7601745413802427,
+      "abs_correlation": 0.7601745413802427,
+      "relationship": "positive co-expression",
+      "gene_a_sources": "tumor_subtype",
+      "gene_b_sources": "survival"
+    },
+    {
+      "gene_a": "MARCHF6",
+      "gene_b": "FOXP1-IT1",
+      "spearman_correlation": 0.7425271622354461,
+      "abs_correlation": 0.7425271622354461,
+      "relationship": "positive co-expression",
+      "gene_a_sources": "survival",
+      "gene_b_sources": "survival"
+    },
+    {
+      "gene_a": "MKI67",
+      "gene_b": "CDC20",
+      "spearman_correlation": 0.7407991263263648,
+      "abs_correlation": 0.7407991263263648,
+      "relationship": "positive co-expression",
+      "gene_a_sources": "curated_breast_cancer_marker; recurrence",
+      "gene_b_sources": "curated_breast_cancer_marker; recurrence"
+    }
+  ],
+  "top_negative_pairs": [
+    {
+      "gene_a": "C1R",
+      "gene_b": "FOXP1-IT1",
+      "spearman_correlation": -0.6628779562097904,
+      "abs_correlation": 0.6628779562097904,
+      "relationship": "negative/opposite expression",
+      "gene_a_sources": "survival",
+      "gene_b_sources": "survival"
+    },
+    {
+      "gene_a": "MARCHF6",
+      "gene_b": "C1R",
+      "spearman_correlation": -0.6406897145483771,
+      "abs_correlation": 0.6406897145483771,
+      "relationship": "negative/opposite expression",
+      "gene_a_sources": "survival",
+      "gene_b_sources": "survival"
+    },
+    {
+      "gene_a": "ESR1",
+      "gene_b": "EGFR",
+      "spearman_correlation": -0.638223267845945,
+      "abs_correlation": 0.638223267845945,
+      "relationship": "negative/opposite expression",
+      "gene_a_sources": "curated_breast_cancer_marker; tumor_subtype",
+      "gene_b_sources": "curated_breast_cancer_marker; tumor_subtype"
+    },
+    {
+      "gene_a": "BCL10",
+      "gene_b": "MARCHF6",
+      "spearman_correlation": -0.6308869216193679,
+      "abs_correlation": 0.6308869216193679,
+      "relationship": "negative/opposite expression",
+      "gene_a_sources": "survival",
+      "gene_b_sources": "survival"
+    },
+    {
+      "gene_a": "PRNP",
+      "gene_b": "FOXP1-IT1",
+      "spearman_correlation": -0.6027926201130942,
+      "abs_correlation": 0.6027926201130942,
+      "relationship": "negative/opposite expression",
+      "gene_a_sources": "survival",
+      "gene_b_sources": "survival"
+    },
+    {
+      "gene_a": "MARCHF6",
+      "gene_b": "SDHD",
+      "spearman_correlation": -0.6010638239756618,
+      "abs_correlation": 0.6010638239756618,
+      "relationship": "negative/opposite expression",
+      "gene_a_sources": "survival",
+      "gene_b_sources": "survival"
+    },
+    {
+      "gene_a": "FOXP1-IT1",
+      "gene_b": "SDHD",
+      "spearman_correlation": -0.5999921201583349,
+      "abs_correlation": 0.5999921201583349,
+      "relationship": "negative/opposite expression",
+      "gene_a_sources": "survival",
+      "gene_b_sources": "survival"
+    },
+    {
+      "gene_a": "MARCHF6",
+      "gene_b": "SELENOF",
+      "spearman_correlation": -0.595073972130558,
+      "abs_correlation": 0.595073972130558,
+      "relationship": "negative/opposite expression",
+      "gene_a_sources": "survival",
+      "gene_b_sources": "survival"
+    },
+    {
+      "gene_a": "RPL21",
+      "gene_b": "FOXP1-IT1",
+      "spearman_correlation": -0.5745183150826499,
+      "abs_correlation": 0.5745183150826499,
+      "relationship": "negative/opposite expression",
+      "gene_a_sources": "survival",
+      "gene_b_sources": "survival"
+    },
+    {
+      "gene_a": "FOXP1-IT1",
+      "gene_b": "SELENOF",
+      "spearman_correlation": -0.5697040314728107,
+      "abs_correlation": 0.5697040314728107,
+      "relationship": "negative/opposite expression",
+      "gene_a_sources": "survival",
+      "gene_b_sources": "survival"
+    }
+  ],
+  "outputs": "E:\\Freelance work\\nour\\outputs\\gene_correlation_pattern_analysis"
+}

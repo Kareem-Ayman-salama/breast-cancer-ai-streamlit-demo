@@ -1,0 +1,21 @@
+{
+  "task": "METABRIC real molecular tumor subtype prediction",
+  "label_source": "CLAUDIN_SUBTYPE",
+  "model_source": "E:\\Freelance work\\nour\\outputs\\metabric_real_label_prognosis\\subtype_model.joblib",
+  "samples_predicted": 1980,
+  "samples_with_real_subtype_label": 1974,
+  "classes": [
+    "Basal",
+    "Her2",
+    "LumA",
+    "LumB",
+    "Normal",
+    "claudin-low"
+  ],
+  "full_dataset_accuracy_apparent": 0.9518743667679838,
+  "full_dataset_balanced_accuracy_apparent": 0.9494225400894883,
+  "full_dataset_macro_f1_apparent": 0.9443357532405011,
+  "holdout_accuracy_from_previous_training": 0.7620253164556962,
+  "holdout_balanced_accuracy_from_previous_training": 0.7478691067620287,
+  "important_note": "Use holdout metrics for honest model performance. Full-dataset apparent metrics are included only as a sanity check on all available predictions."
+}

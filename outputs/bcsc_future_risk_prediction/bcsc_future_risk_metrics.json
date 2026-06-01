@@ -1,0 +1,31 @@
+{
+  "task": "Future breast cancer incidence risk after screening mammogram",
+  "prediction_horizon": "1 year after index screening mammogram",
+  "target": "invasive or ductal carcinoma in situ breast cancer within one year",
+  "dataset": "BCSC Risk Estimation Dataset",
+  "weighted_training_records": 1795139,
+  "weighted_validation_records": 597859,
+  "weighted_training_events": 8767,
+  "weighted_validation_events": 2871,
+  "model": "Weighted one-hot LogisticRegression",
+  "baseline_model": "Dummy prior probability",
+  "validation": {
+    "roc_auc": 0.6393393848777476,
+    "average_precision": 0.008195749811037753,
+    "brier_score": 0.004773208603618287,
+    "threshold": 0.004883744378569014,
+    "precision": 0.0071998958070476765,
+    "recall": 0.6161616161616161,
+    "f1": 0.014233472395994673
+  },
+  "baseline_validation": {
+    "roc_auc": 0.5,
+    "average_precision": 0.0048021356206061966,
+    "brier_score": 0.004779081774076879,
+    "threshold": 0.004883744378569014,
+    "precision": 0.0048021356206061966,
+    "recall": 1.0,
+    "f1": 0.009558370649043664
+  },
+  "important_wording": "This predicts one-year breast cancer diagnosis risk for women undergoing screening mammography. It is not a gene-expression cancer signature and not a lifetime risk model."
+}

@@ -1,0 +1,59 @@
+{
+  "endpoint": "survival",
+  "event_col": "os_event",
+  "time_col": "OS_MONTHS",
+  "best_candidate": "combined_logreg_k50",
+  "input_type": "combined",
+  "model_type": "logreg",
+  "k_genes": 50,
+  "threshold": 0.5924600478311617,
+  "samples": 1980,
+  "events": 1143,
+  "non_events": 837,
+  "train_roc_auc": 0.8054296351938338,
+  "cv_roc_auc": 0.7423870799176981,
+  "holdout_roc_auc": 0.7495489370603772,
+  "holdout_average_precision": 0.7943543698339751,
+  "holdout_balanced_accuracy": 0.6801767643751798,
+  "holdout_accuracy": 0.6666666666666666,
+  "holdout_f1": 0.6732673267326733,
+  "holdout_precision": 0.7771428571428571,
+  "holdout_recall": 0.5938864628820961,
+  "confusion_matrix": [
+    [
+      128,
+      39
+    ],
+    [
+      93,
+      136
+    ]
+  ],
+  "classification_report": {
+    "0": {
+      "precision": 0.579185520361991,
+      "recall": 0.7664670658682635,
+      "f1-score": 0.6597938144329897,
+      "support": 167.0
+    },
+    "1": {
+      "precision": 0.7771428571428571,
+      "recall": 0.5938864628820961,
+      "f1-score": 0.6732673267326733,
+      "support": 229.0
+    },
+    "accuracy": 0.6666666666666666,
+    "macro avg": {
+      "precision": 0.6781641887524241,
+      "recall": 0.6801767643751798,
+      "f1-score": 0.6665305705828315,
+      "support": 396.0
+    },
+    "weighted avg": {
+      "precision": 0.6936608489549666,
+      "recall": 0.6666666666666666,
+      "f1-score": 0.6675853152325543,
+      "support": 396.0
+    }
+  }
+}
