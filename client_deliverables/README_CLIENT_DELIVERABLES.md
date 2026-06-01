@@ -9,6 +9,7 @@ This folder contains the polished delivery package for the breast cancer AI proj
 - `final_client_report.md`: client-facing report with numbers and figures.
 - `final_client_report.html`: browser-friendly report with rendered figures.
 - `breast_cancer_ai_client_report.docx`: Word version of the client-facing report.
+- `sample_gene_expression_upload_metabric.csv`: sample gene-expression file for testing the upload page.
 
 ## Run Streamlit
 

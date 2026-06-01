@@ -47,6 +47,21 @@ LABEL_MAPS = {
     "hrt": {"0": "No current hormone therapy", "1": "Current hormone therapy", "9": "Unknown/not menopausal"},
 }
 
+CURATED_GENE_SUPPORT = {
+    "ERBB2": "HER2/ERBB2 signal: consider HER2 pathway review and targeted therapy eligibility if clinically confirmed.",
+    "ESR1": "ESR1 signal: hormone receptor / endocrine pathway involvement may be clinically relevant.",
+    "PGR": "PGR signal: progesterone receptor pathway involvement may support hormone-pathway review.",
+    "TP53": "TP53 abnormal signal: often associated with aggressive biology and DNA-damage pathway disruption.",
+    "BRCA1": "BRCA1 signal: DNA repair pathway; genetic/HRD review may be relevant if clinically confirmed.",
+    "BRCA2": "BRCA2 signal: DNA repair pathway; genetic/HRD review may be relevant if clinically confirmed.",
+    "MKI67": "MKI67 high signal: proliferation marker that may suggest aggressive growth behavior.",
+    "EGFR": "EGFR high signal: growth-factor pathway signal, often relevant in basal-like biology.",
+    "KRT5": "KRT5 high signal: basal-like cytokeratin pattern.",
+    "KRT14": "KRT14 high signal: basal-like cytokeratin pattern.",
+    "KRT17": "KRT17 high signal: basal-like cytokeratin pattern.",
+    "CDH1": "CDH1 abnormal signal: cell-adhesion pathway; may be relevant in lobular-like biology.",
+}
+
 
 @st.cache_data(show_spinner=False)
 def load_json(path: str) -> dict:
@@ -109,6 +124,121 @@ def select_code(feature: str, default: str):
     )
 
 
+def prepare_gene_expression_table(raw: pd.DataFrame) -> tuple[pd.DataFrame, str]:
+    """Accept wide or long gene-expression CSVs and return samples x genes."""
+    df = raw.copy()
+    df.columns = [str(c).strip() for c in df.columns]
+    lower_cols = {c.lower().replace(" ", "_"): c for c in df.columns}
+
+    gene_col = None
+    for key in ["hugo_symbol", "gene", "gene_symbol", "symbol", "genes"]:
+        if key in lower_cols:
+            gene_col = lower_cols[key]
+            break
+
+    if gene_col is not None:
+        candidate_value_cols = [c for c in df.columns if c != gene_col]
+        numeric_values = df[candidate_value_cols].apply(pd.to_numeric, errors="coerce")
+        numeric_values = numeric_values.dropna(axis=1, how="all")
+        if numeric_values.empty:
+            raise ValueError("Long-format file detected, but no numeric expression value columns were found.")
+        genes = df[gene_col].astype(str).str.strip()
+        long_expr = numeric_values.copy()
+        long_expr.insert(0, "gene", genes)
+        long_expr = long_expr.groupby("gene", sort=False).mean(numeric_only=True)
+        expr = long_expr.T
+        expr.index = [str(idx) for idx in expr.index]
+        return expr, "long format: one gene column and one or more sample/value columns"
+
+    id_col = None
+    for candidate in ["sample_id", "patient_id", "case_submitter_id", "id"]:
+        if candidate in lower_cols:
+            id_col = lower_cols[candidate]
+            break
+
+    metadata_cols = {
+        "label",
+        "sample_type",
+        "vital_status",
+        "ajcc_pathologic_stage",
+        "cancer_prediction",
+        "risk_prediction",
+        "subtype",
+    }
+    drop_cols = []
+    for col in df.columns:
+        normalized = col.lower().replace(" ", "_")
+        if col == id_col or normalized in metadata_cols:
+            drop_cols.append(col)
+
+    expr = df.drop(columns=drop_cols, errors="ignore")
+    expr = expr.apply(pd.to_numeric, errors="coerce")
+    expr = expr.dropna(axis=1, how="all")
+    if expr.empty:
+        raise ValueError("Wide-format file detected, but no numeric gene-expression columns were found.")
+    if id_col is not None:
+        expr.index = df[id_col].astype(str)
+    else:
+        expr.index = [f"uploaded_sample_{i+1}" for i in range(len(expr))]
+    return expr, "wide format: one row per sample and one column per gene"
+
+
+def align_expression_to_model(expr: pd.DataFrame, model, min_coverage: float = 0.70):
+    required = list(getattr(model, "feature_names_in_", []))
+    if not required:
+        raise ValueError("This model does not expose feature_names_in_, so upload alignment is not available.")
+
+    exact_map = {str(col): col for col in expr.columns}
+    upper_map = {str(col).strip().upper(): col for col in expr.columns}
+
+    aligned = pd.DataFrame(index=expr.index)
+    found = []
+    missing = []
+    for gene in required:
+        source = exact_map.get(gene)
+        if source is None:
+            source = upper_map.get(str(gene).strip().upper())
+        if source is None:
+            aligned[gene] = pd.NA
+            missing.append(gene)
+        else:
+            aligned[gene] = pd.to_numeric(expr[source], errors="coerce")
+            found.append(gene)
+
+    coverage = len(found) / len(required) if required else 0
+    if coverage < min_coverage:
+        return None, found, missing, coverage
+    return aligned, found, missing, coverage
+
+
+def binary_probability(model, aligned: pd.DataFrame) -> list[float]:
+    if hasattr(model, "predict_proba"):
+        return (model.predict_proba(aligned)[:, 1] * 100).tolist()
+    scores = model.decision_function(aligned)
+    scores = 1 / (1 + pd.Series(-scores).map(lambda x: __import__("math").exp(x)))
+    return (scores * 100).tolist()
+
+
+def uploaded_gene_support(expr: pd.DataFrame, sample_id: str) -> str:
+    if sample_id not in expr.index:
+        return "No support flags available."
+    row = expr.loc[sample_id]
+    flags = []
+    upper_map = {str(col).strip().upper(): col for col in expr.columns}
+    for gene, insight in CURATED_GENE_SUPPORT.items():
+        col = upper_map.get(gene)
+        if col is None:
+            continue
+        value = pd.to_numeric(pd.Series([row[col]]), errors="coerce").iloc[0]
+        if pd.isna(value):
+            continue
+        if value >= 2:
+            flags.append(f"{gene} high ({value:.2f}): {insight}")
+        elif value <= -2:
+            flags.append(f"{gene} low ({value:.2f}): clinically relevant abnormal expression pattern; {insight}")
+    return "; ".join(flags) if flags else "No curated extreme-expression support flags found. For best results, upload z-score normalized expression."
+
+
 st.title("Breast Cancer AI Project Demo")
 st.caption("Cancer signature, future incidence risk, subtype prediction, prognosis, and gene correlation analysis")
 
@@ -116,6 +246,7 @@ page = st.sidebar.radio(
     "Sections",
     [
         "Overview",
+        "Upload Gene Expression",
         "Future Risk Percent",
         "Cancer Signature",
         "Tumor Subtype",
@@ -132,6 +263,7 @@ subtype_metrics = load_json(str(OUT / "tumor_subtype_prediction" / "tumor_subtyp
 survival_metrics = load_json(str(OUT / "metabric_optimized_prognosis" / "survival_best_metrics.json"))
 recurrence_metrics = load_json(str(OUT / "metabric_optimized_prognosis" / "recurrence_best_metrics.json"))
 corr_summary = load_json(str(OUT / "gene_correlation_pattern_analysis" / "gene_correlation_pattern_summary.json"))
+upload_gene_metrics = load_json(str(OUT / "streamlit_upload_gene_models" / "upload_gene_models_metrics.json"))
 
 if page == "Overview":
     c1, c2, c3, c4 = st.columns(4)
@@ -157,6 +289,126 @@ if page == "Overview":
         ["Recurrence prognosis", "METABRIC", "Recurrence event", metric_value(recurrence_metrics, "holdout_roc_auc")],
     ]
     st.dataframe(pd.DataFrame(rows, columns=["Part", "Dataset", "Target", "Main metric"]), use_container_width=True)
+
+elif page == "Upload Gene Expression":
+    st.subheader("Upload Gene Expression CSV")
+    st.write(
+        """
+        Upload a gene-expression CSV to run available gene-based modules on new samples.
+        Supported formats:
+
+        1. Wide format: one row per sample and one column per gene.
+        2. Long format: one gene column such as `Hugo_Symbol` or `gene`, plus one or more numeric sample/value columns.
+        """
+    )
+    st.info(
+        "Cancer Detection and Subtype Prediction need broad gene-expression coverage. "
+        "Survival and Recurrence here use gene-expression-only upload models, separate from the optimized clinical+gene prognosis models."
+    )
+
+    uploaded = st.file_uploader("Upload gene-expression CSV", type=["csv"], key="gene_expression_upload")
+
+    cancer_model_path = OUT / "tcga_brca_cells" / "cancer_prediction" / "cancer_prediction_model.joblib"
+    subtype_model_path = OUT / "metabric_real_label_prognosis" / "subtype_model.joblib"
+    survival_upload_model_path = OUT / "streamlit_upload_gene_models" / "survival_gene_expression_upload_model.joblib"
+    recurrence_upload_model_path = OUT / "streamlit_upload_gene_models" / "recurrence_gene_expression_upload_model.joblib"
+
+    with st.expander("Download an empty template header"):
+        if cancer_model_path.exists():
+            model = load_model(str(cancer_model_path))
+            template_cols = ["sample_id"] + list(getattr(model, "feature_names_in_", []))
+            template = pd.DataFrame([["sample_1"] + [None] * (len(template_cols) - 1)], columns=template_cols)
+            st.download_button(
+                "Download TCGA cancer model gene template",
+                template.to_csv(index=False).encode("utf-8"),
+                "tcga_gene_expression_template.csv",
+                "text/csv",
+            )
+        if subtype_model_path.exists():
+            model = load_model(str(subtype_model_path))
+            template_cols = ["sample_id"] + list(getattr(model, "feature_names_in_", []))
+            template = pd.DataFrame([["sample_1"] + [None] * (len(template_cols) - 1)], columns=template_cols)
+            st.download_button(
+                "Download METABRIC subtype/prognosis gene template",
+                template.to_csv(index=False).encode("utf-8"),
+                "metabric_gene_expression_template.csv",
+                "text/csv",
+            )
+
+    if uploaded is not None:
+        raw = pd.read_csv(uploaded)
+        try:
+            expr, detected_format = prepare_gene_expression_table(raw)
+        except Exception as exc:
+            st.error(f"Could not parse uploaded file: {exc}")
+            st.stop()
+
+        st.success(f"Parsed {expr.shape[0]} sample(s) and {expr.shape[1]} numeric gene column(s) from {detected_format}.")
+        st.dataframe(expr.head(), use_container_width=True)
+
+        results = pd.DataFrame(index=expr.index)
+        results.index.name = "sample_id"
+
+        model_tasks = [
+            ("Cancer Detection", cancer_model_path, "cancer_signature_probability_percent", 0.70),
+            ("Gene-only Survival", survival_upload_model_path, "survival_event_probability_percent", 0.70),
+            ("Gene-only Recurrence", recurrence_upload_model_path, "recurrence_event_probability_percent", 0.70),
+        ]
+
+        for task_name, model_path, output_col, min_coverage in model_tasks:
+            if not model_path.exists():
+                st.warning(f"{task_name} model file is missing: {model_path.name}")
+                continue
+            model = load_model(str(model_path))
+            aligned, found, missing, coverage = align_expression_to_model(expr, model, min_coverage=min_coverage)
+            st.write(f"{task_name} gene coverage: **{coverage*100:.1f}%** ({len(found)} / {len(found) + len(missing)})")
+            if aligned is None:
+                st.warning(f"{task_name} skipped because coverage is below {min_coverage*100:.0f}%. First missing genes: {missing[:20]}")
+                continue
+            probs = binary_probability(model, aligned)
+            results[output_col] = probs
+            if task_name == "Cancer Detection":
+                results["cancer_detection_prediction"] = ["Cancer-like" if p >= 50 else "Normal-like" for p in probs]
+            elif task_name == "Gene-only Survival":
+                threshold = upload_gene_metrics.get("survival", {}).get("threshold", 0.5) * 100
+                results["survival_risk_group"] = ["High risk" if p >= threshold else "Lower risk" for p in probs]
+            elif task_name == "Gene-only Recurrence":
+                threshold = upload_gene_metrics.get("recurrence", {}).get("threshold", 0.5) * 100
+                results["recurrence_risk_group"] = ["High risk" if p >= threshold else "Lower risk" for p in probs]
+
+        if subtype_model_path.exists():
+            subtype_model = load_model(str(subtype_model_path))
+            aligned, found, missing, coverage = align_expression_to_model(expr, subtype_model, min_coverage=0.70)
+            st.write(f"Subtype Prediction gene coverage: **{coverage*100:.1f}%** ({len(found)} / {len(found) + len(missing)})")
+            if aligned is not None:
+                subtype_probs = subtype_model.predict_proba(aligned)
+                classes = list(subtype_model.classes_)
+                best_idx = subtype_probs.argmax(axis=1)
+                results["predicted_subtype"] = [classes[i] for i in best_idx]
+                results["subtype_confidence_percent"] = [float(subtype_probs[row_i, best_idx[row_i]] * 100) for row_i in range(len(best_idx))]
+                for class_idx, class_name in enumerate(classes):
+                    results[f"subtype_probability_{class_name}_percent"] = subtype_probs[:, class_idx] * 100
+            else:
+                st.warning(f"Subtype Prediction skipped because coverage is below 70%. First missing genes: {missing[:20]}")
+        else:
+            st.warning("Subtype model file is missing.")
+
+        results["therapeutic_support_flags"] = [uploaded_gene_support(expr, sample_id) for sample_id in results.index]
+
+        st.subheader("Uploaded Sample Predictions")
+        st.dataframe(results.reset_index(), use_container_width=True)
+        st.download_button(
+            "Download uploaded-sample predictions",
+            results.reset_index().to_csv(index=False).encode("utf-8"),
+            "uploaded_gene_expression_predictions.csv",
+            "text/csv",
+        )
+
+        if "cancer_signature_probability_percent" in results.columns:
+            st.bar_chart(results["cancer_signature_probability_percent"])
+        if "predicted_subtype" in results.columns:
+            st.write("Subtype distribution")
+            st.bar_chart(results["predicted_subtype"].value_counts())
 
 elif page == "Future Risk Percent":
     st.subheader("Future Breast Cancer Risk Percentage")

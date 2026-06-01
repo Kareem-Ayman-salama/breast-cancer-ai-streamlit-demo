@@ -1,0 +1,38 @@
+{
+  "survival": {
+    "endpoint": "survival",
+    "task": "Gene-expression-only survival event risk for uploaded patient files",
+    "samples": 1980,
+    "events": 1143,
+    "non_events": 837,
+    "features": 20384,
+    "selected_genes": 200,
+    "holdout_roc_auc": 0.6564077086002666,
+    "holdout_average_precision": 0.7143290347675247,
+    "holdout_balanced_accuracy": 0.6164919070156629,
+    "holdout_accuracy": 0.6136363636363636,
+    "holdout_f1": 0.6416861826697893,
+    "holdout_precision": 0.6919191919191919,
+    "holdout_recall": 0.5982532751091703,
+    "threshold": 0.5140346033519445,
+    "important_note": "This upload model uses gene expression only. It is separate from the optimized METABRIC combined clinical+gene prognosis model."
+  },
+  "recurrence": {
+    "endpoint": "recurrence",
+    "task": "Gene-expression-only recurrence event risk for uploaded patient files",
+    "samples": 1979,
+    "events": 803,
+    "non_events": 1176,
+    "features": 20384,
+    "selected_genes": 200,
+    "holdout_roc_auc": 0.6053918329589005,
+    "holdout_average_precision": 0.5071996454815408,
+    "holdout_balanced_accuracy": 0.5863486190035682,
+    "holdout_accuracy": 0.5833333333333334,
+    "holdout_f1": 0.5403899721448467,
+    "holdout_precision": 0.4898989898989899,
+    "holdout_recall": 0.6024844720496895,
+    "threshold": 0.484583847316348,
+    "important_note": "This upload model uses gene expression only. It is separate from the optimized METABRIC combined clinical+gene prognosis model."
+  }
+}

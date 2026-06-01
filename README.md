@@ -37,8 +37,19 @@ client_deliverables/streamlit_app.py
 - TCGA cancer molecular signature review.
 - METABRIC tumor subtype prediction review.
 - METABRIC survival and recurrence prognosis review.
+- Upload Gene Expression page for testing new CSV gene-expression files.
 - Gene-gene correlation and expression pattern review.
 - Client reports in Markdown, HTML, and Word.
+
+## Gene Expression Upload Test File
+
+The repository includes a small public METABRIC-style sample file:
+
+```text
+sample_gene_expression_upload_metabric.csv
+```
+
+Upload it in the Streamlit **Upload Gene Expression** page to test subtype and gene-only prognosis predictions immediately.
 
 ## Scientific Note
 
