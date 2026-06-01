@@ -10,7 +10,7 @@
 - Prognosis prediction للـ survival و recurrence باستخدام METABRIC.
 - External validation على GEO datasets.
 - Gene correlation and expression pattern analysis لتوضيح العلاقات بين الجينات.
-- Streamlit demo يسمح للعميل بتجربة نموذج BCSC، استعراض نتائج المرضى، وتجربة علاقات الجينات.
+- Streamlit demo يسمح للعميل بتجربة نموذج BCSC، استعراض نتائج المرضى، تجربة علاقات الجينات، ورفع ملفات Gene Expression جديدة.
 
 ## 2. Project Scope
 
@@ -33,6 +33,7 @@
 | Survival prognosis | METABRIC | Overall survival event risk | 1980 | Holdout ROC-AUC 0.750 | Completed |
 | Recurrence prognosis | METABRIC | Recurrence-free survival event risk | 1979 | Holdout ROC-AUC 0.657 | Completed |
 | External validation | GEO: GSE2034, GSE20685, GSE7390 | Relapse, metastasis, death, RFS, OS | 1643 | External ROC-AUC range 0.348 to 0.664 | Completed with limitations |
+| Gene-expression upload | Streamlit demo | User-uploaded gene CSV prediction | 20384 features | Survival gene-only AUC 0.656; Recurrence gene-only AUC 0.605 | Completed |
 | Gene correlation and patterns | METABRIC | Gene-gene correlation and expression patterns | 1980 | 232 strong gene pairs | Completed |
 
 ## 4. Key Numbers
@@ -221,12 +222,49 @@ Top strong gene-gene relationships:
 
 ![Gene Pair Scatter Patterns](../outputs/gene_correlation_pattern_analysis/figures/05_gene_pair_scatter_patterns.png)
 
+### Gene Expression Upload and Streamlit Demo
+
+تم تحديث تطبيق Streamlit ليحتوي على صفحة جديدة باسم **Upload Gene Expression**.
+
+المستخدم الآن يستطيع رفع ملف CSV يحتوي على Gene Expression values، والنظام يحاول تشغيل الأجزاء التالية حسب تغطية الجينات داخل الملف:
+
+- Cancer Detection probability.
+- Tumor Subtype Prediction.
+- Gene-only Survival risk.
+- Gene-only Recurrence risk.
+- Therapeutic / clinical support flags.
+
+Supported upload formats:
+
+- Wide format: كل صف يمثل sample، وكل عمود يمثل gene.
+- Long format: عمود gene أو Hugo_Symbol، وباقي الأعمدة قيم expression/sample values.
+
+Upload gene-only model results:
+
+| Upload task | Samples | Events | Features | Selected genes | ROC-AUC | Balanced Accuracy | F1 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Survival | 1980 | 1143 | 20384 | 200 | 0.656 | 0.616 | 0.642 |
+| Recurrence | 1979 | 803 | 20384 | 200 | 0.605 | 0.586 | 0.540 |
+
+Important note: upload Survival and Recurrence models use gene expression only. They are separate from the optimized METABRIC combined clinical+gene prognosis models, so their performance is expected to be lower.
+
+Added demo file:
+
+- `sample_gene_expression_upload_metabric.csv`
+
+GitHub repository:
+
+- https://github.com/Kareem-Ayman-salama/breast-cancer-ai-streamlit-demo
+
 
 ## 5. Deliverables
 
 - Unified notebook: `client_deliverables/breast_cancer_ai_unified_client_notebook.ipynb`
 - Streamlit app: `client_deliverables/streamlit_app.py`
 - Final report: `client_deliverables/final_client_report.md`
+- Word report: `client_deliverables/breast_cancer_ai_client_report.docx`
+- HTML report: `client_deliverables/final_client_report.html`
+- Sample upload file: `sample_gene_expression_upload_metabric.csv`
 - README: `client_deliverables/README_CLIENT_DELIVERABLES.md`
 
 ## 6. Important Scientific Notes
@@ -235,6 +273,7 @@ Top strong gene-gene relationships:
 - BCSC part is the proper component for percentage future risk, because it has follow-up labels for future diagnosis within one year.
 - METABRIC subtype uses real subtype labels, not proxy labels.
 - Prognosis models are moderate, which is scientifically normal for recurrence and survival tasks because labels are noisier and biology is more complex.
+- Upload Survival and Recurrence models are gene-expression-only models and are included for user-upload testing; they should not be confused with the stronger optimized combined clinical+gene models.
 - GEO external validation is mixed. Some endpoints generalize reasonably, while GSE7390 OS is weak and should be presented as a limitation.
 - Clinical support output is for decision support only and must not be framed as a direct treatment prescription.
 

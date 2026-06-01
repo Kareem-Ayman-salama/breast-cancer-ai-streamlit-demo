@@ -118,6 +118,14 @@
       <td>Completed with limitations</td>
     </tr>
     <tr>
+      <td>Gene-expression upload</td>
+      <td>Streamlit demo</td>
+      <td>User-uploaded gene CSV prediction</td>
+      <td>20384 features</td>
+      <td>Survival gene-only AUC 0.656; Recurrence gene-only AUC 0.605</td>
+      <td>Completed</td>
+    </tr>
+    <tr>
       <td>Gene correlation and patterns</td>
       <td>METABRIC</td>
       <td>Gene-gene correlation and expression patterns</td>
@@ -135,6 +143,7 @@
     <li>METABRIC Tumor Subtype holdout balanced accuracy: 0.748</li>
     <li>METABRIC Survival holdout ROC-AUC: 0.750</li>
     <li>METABRIC Recurrence holdout ROC-AUC: 0.657</li>
+    <li>Gene-expression upload models: Survival gene-only ROC-AUC 0.656; Recurrence gene-only ROC-AUC 0.605</li>
     <li>Strong gene-gene correlation pairs: 232</li>
   </ul>
 
@@ -379,10 +388,67 @@
   <figure><h3>Strong Gene Correlation Network</h3><img src="../outputs/gene_correlation_pattern_analysis/figures/04_strong_gene_correlation_network.png" alt="Strong Gene Correlation Network"></figure>
   <figure><h3>Gene Pair Scatter Patterns</h3><img src="../outputs/gene_correlation_pattern_analysis/figures/05_gene_pair_scatter_patterns.png" alt="Gene Pair Scatter Patterns"></figure>
 
-  <h2>10. Limitations and Next Steps</h2>
+  <h2>10. Gene Expression Upload and Streamlit Demo</h2>
+  <p dir="rtl">
+    تم تحديث تطبيق Streamlit ليحتوي على صفحة جديدة باسم <strong>Upload Gene Expression</strong>.
+    يستطيع المستخدم رفع ملف CSV يحتوي على قيم Gene Expression، ثم يقوم النظام بتشغيل التوقعات المتاحة حسب نسبة تغطية الجينات داخل الملف.
+  </p>
+  <ul>
+    <li>Cancer Detection probability.</li>
+    <li>Tumor Subtype Prediction.</li>
+    <li>Gene-only Survival risk.</li>
+    <li>Gene-only Recurrence risk.</li>
+    <li>Therapeutic / clinical support flags.</li>
+  </ul>
+  <table>
+    <thead>
+      <tr>
+        <th>Upload task</th>
+        <th>Samples</th>
+        <th>Events</th>
+        <th>Features</th>
+        <th>Selected genes</th>
+        <th>ROC-AUC</th>
+        <th>Balanced Accuracy</th>
+        <th>F1</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Survival</td>
+        <td>1980</td>
+        <td>1143</td>
+        <td>20384</td>
+        <td>200</td>
+        <td>0.656</td>
+        <td>0.616</td>
+        <td>0.642</td>
+      </tr>
+      <tr>
+        <td>Recurrence</td>
+        <td>1979</td>
+        <td>803</td>
+        <td>20384</td>
+        <td>200</td>
+        <td>0.605</td>
+        <td>0.586</td>
+        <td>0.540</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="note" dir="rtl">
+    ملاحظة: موديلات Upload الخاصة بالـ Survival وRecurrence تستخدم Gene Expression فقط، ولذلك هي منفصلة عن موديلات METABRIC المحسنة التي تستخدم clinical + gene features.
+  </div>
+  <p>
+    Added sample file: <code>sample_gene_expression_upload_metabric.csv</code><br>
+    GitHub repository: <a href="https://github.com/Kareem-Ayman-salama/breast-cancer-ai-streamlit-demo">https://github.com/Kareem-Ayman-salama/breast-cancer-ai-streamlit-demo</a>
+  </p>
+
+  <h2>11. Limitations and Next Steps</h2>
   <ul>
     <li>Use TCGA as molecular signature detection, not future incidence risk.</li>
     <li>Use BCSC for future percentage risk because it has real future diagnosis labels.</li>
+    <li>Upload Survival and Recurrence models use gene expression only and are expected to be weaker than the optimized combined clinical+gene models.</li>
     <li>Survival and recurrence are biologically harder, so moderate performance is expected and should be improved with more cohorts.</li>
     <li>External validation is mixed and should be included transparently in the paper.</li>
     <li>Clinical support is decision support only, not direct treatment prescription.</li>
